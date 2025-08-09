@@ -11,7 +11,7 @@ export default function Header() {
       <Link href="/" className="font-bold text-2xl hover:text-gray-500">
         Love Hate Love
       </Link>
-      <nav>
+      <nav className="flex gap-4">
         <Link
           href="/"
           className={
@@ -21,8 +21,17 @@ export default function Header() {
           }
         >
           Home
-        </Link>{" "}
-        |{" "}
+        </Link>
+        <Link
+          href="/channels"
+          className={
+            pathname === "/channels"
+              ? "font-semibold underline"
+              : " hover:text-gray-500"
+          }
+        >
+          Channels
+        </Link>
         <Link
           href="/about"
           className={
