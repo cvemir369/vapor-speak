@@ -64,7 +64,7 @@ export default function Channels() {
 
   const handleChannelSelect = (channel: string, closeMenu?: () => void) => {
     setSelectedChannel(channel);
-    closeMenu?.(); // Close mobile menu if closeMenu function is provided
+    closeMenu?.();
   };
 
   return (
