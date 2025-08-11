@@ -7,40 +7,33 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="flex items-center justify-between p-4">
+    <header className="flex items-center justify-center md:items-center md:justify-between p-3 bg-neutral-800">
       <Link href="/" className="font-bold text-2xl hover:text-gray-500">
-        Love Hate Love
+        Vapor Speak
       </Link>
-      <nav className="flex gap-4">
+      {/* Navigation - Hidden on mobile, visible on desktop */}
+      <nav className="hidden md:flex gap-4">
         <Link
           href="/"
-          className={
-            pathname === "/"
-              ? "font-semibold underline"
-              : " hover:text-gray-500"
-          }
+          className={pathname === "/" ? "font-bold" : " hover:text-gray-500"}
         >
-          Home
+          🏠 Home
         </Link>
         <Link
           href="/channels"
           className={
-            pathname === "/channels"
-              ? "font-semibold underline"
-              : " hover:text-gray-500"
+            pathname === "/channels" ? "font-bold" : " hover:text-gray-500"
           }
         >
-          Channels
+          💬 Channels
         </Link>
         <Link
           href="/about"
           className={
-            pathname === "/about"
-              ? "font-semibold underline"
-              : " hover:text-gray-500"
+            pathname === "/about" ? "font-bold" : " hover:text-gray-500"
           }
         >
-          About
+          ℹ️ About
         </Link>
       </nav>
     </header>
