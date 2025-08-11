@@ -7,8 +7,8 @@ export default function Home() {
       <MobileMenu />
 
       <div className="flex flex-col justify-center gap-4 mb-6 mt-16 md:mt-0">
-        <h1 className="font-bold text-5xl">Welcome to Love Hate Love</h1>
-        <p className="text-xl italic">A platform to express your feelings.</p>
+        <h1 className="font-bold text-5xl">Welcome to Vapor Speak</h1>
+        <p className="text-xl italic">A freedom of speak platform.</p>
       </div>
       <div className="flex flex-col gap-2">
         <p>Explore live chat channels and express yourself.</p>

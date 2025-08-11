@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Love Hate Love",
-  description: "Love to hate the things you love.",
+  title: "Vapor Speak",
+  description: "A freedom of speak platform.",
 };
 
 export default function RootLayout({

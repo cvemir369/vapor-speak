@@ -9,7 +9,7 @@ export default function Header() {
   return (
     <header className="flex items-center justify-center md:items-center md:justify-between p-3 bg-neutral-800">
       <Link href="/" className="font-bold text-2xl hover:text-gray-500">
-        Love Hate Love
+        Vapor Speak
       </Link>
       {/* Navigation - Hidden on mobile, visible on desktop */}
       <nav className="hidden md:flex gap-4">

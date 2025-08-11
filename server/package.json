@@ -1,7 +1,7 @@
 {
-  "name": "love-hate-love-server",
+  "name": "vapor-speak-server",
   "version": "1.0.0",
-  "description": "Backend server for the Love Hate Love application",
+  "description": "Backend server for the Vapor Speak application",
   "main": "index.ts",
   "scripts": {
     "start": "node dist/index.js",
