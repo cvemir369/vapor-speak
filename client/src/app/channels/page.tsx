@@ -6,7 +6,7 @@ import { useWebSocket } from "@/hooks/useWebSocket";
 export default function Channels() {
   const [selectedChannel, setSelectedChannel] = useState("general");
   const [userId, setUserId] = useState(
-    `user_${Math.random().toString(36).substr(2, 9)}`
+    `user_${crypto.randomUUID().slice(0, 8)}`
   );
   const [messageInput, setMessageInput] = useState("");
 
