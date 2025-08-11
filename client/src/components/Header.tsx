@@ -7,11 +7,12 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="flex items-center justify-between p-4">
+    <header className="flex items-center justify-center md:items-center md:justify-between p-3 bg-neutral-800">
       <Link href="/" className="font-bold text-2xl hover:text-gray-500">
         Love Hate Love
       </Link>
-      <nav className="flex gap-4">
+      {/* Navigation - Hidden on mobile, visible on desktop */}
+      <nav className="hidden md:flex gap-4">
         <Link
           href="/"
           className={
