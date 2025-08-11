@@ -6,22 +6,19 @@ import { useWebSocket } from "@/hooks/useWebSocket";
 export default function Channels() {
   const [mounted, setMounted] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState("general");
-  const [userId, setUserId] = useState(
-    `user_${crypto.randomUUID().slice(0, 8)}`
-  );
+  const [userId, setUserId] = useState(() => {
+    if (typeof window !== "undefined") {
+      const storedUserId = localStorage.getItem("userId");
+      return storedUserId
+        ? JSON.parse(storedUserId)
+        : `user_${crypto.randomUUID().slice(0, 8)}`;
+    }
+    return `user_${crypto.randomUUID().slice(0, 8)}`;
+  });
   const [tempUserId, setTempUserId] = useState(userId);
   const [messageInput, setMessageInput] = useState("");
-
-  const { messages, sendMessage, isConnected } = useWebSocket(
-    selectedChannel,
-    userId
-  );
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const channels = [
+  const [newChannelInput, setNewChannelInput] = useState("");
+  const [channels, setChannels] = useState([
     "general",
     "random",
     "tech",
@@ -31,7 +28,16 @@ export default function Channels() {
     "movies",
     "news",
     "live event",
-  ];
+  ]);
+
+  const { messages, sendMessage, isConnected } = useWebSocket(
+    selectedChannel,
+    userId
+  );
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,6 +50,19 @@ export default function Channels() {
   const handleUsernameChange = () => {
     if (tempUserId.trim()) {
       setUserId(tempUserId.trim());
+      localStorage.setItem("userId", JSON.stringify(tempUserId.trim()));
+    }
+  };
+
+  const handleCreateChannel = () => {
+    if (
+      newChannelInput.trim() &&
+      !channels.includes(newChannelInput.trim().toLowerCase())
+    ) {
+      const newChannel = newChannelInput.trim().toLowerCase();
+      setChannels([...channels, newChannel]);
+      setSelectedChannel(newChannel);
+      setNewChannelInput("");
     }
   };
 
@@ -62,7 +81,7 @@ export default function Channels() {
             <button
               key={channel}
               onClick={() => setSelectedChannel(channel)}
-              className={`block w-full text-left p-2 rounded-full transition-colors ${
+              className={`block w-full text-left p-2 rounded-full transition-colors cursor-pointer ${
                 selectedChannel === channel
                   ? "bg-neutral-300 text-neutral-900 font-bold"
                   : "bg-neutral-800 hover:bg-neutral-600"
@@ -73,24 +92,43 @@ export default function Channels() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-2 mt-8">
-          <label className="">Your Username:</label>
+        <div className="flex items-center mt-4">
+          <input
+            type="text"
+            value={newChannelInput}
+            onChange={(e) => setNewChannelInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleCreateChannel()}
+            className="flex-1 p-2 rounded-l-full bg-neutral-800 text-white focus:outline-none"
+            placeholder="Create a new channel"
+          />
+          <button
+            onClick={handleCreateChannel}
+            disabled={
+              !newChannelInput.trim() ||
+              channels.includes(newChannelInput.trim().toLowerCase())
+            }
+            className="bg-neutral-600 text-white px-4 py-2 rounded-r-full hover:bg-neutral-500 disabled:bg-neutral-900 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            ➕
+          </button>
+        </div>
+
+        <div className="flex items-center mt-4">
           <input
             type="text"
             value={tempUserId}
             onChange={(e) => setTempUserId(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleUsernameChange()}
-            className="w-full p-2 rounded bg-neutral-300 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all"
+            className="flex-1 p-2 rounded-l-full bg-neutral-800 text-white focus:outline-none"
             placeholder="Enter username"
           />
           <button
             onClick={handleUsernameChange}
             disabled={!tempUserId.trim() || tempUserId.trim() === userId}
-            className="bg-neutral-800 text-white px-4 py-2 rounded-full hover:bg-neutral-600 disabled:bg-neutral-900 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors"
+            className="bg-neutral-600 text-white px-4 py-2 rounded-r-full hover:bg-neutral-500 disabled:bg-neutral-900 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors cursor-pointer"
           >
-            Set Username
+            👤
           </button>
-          <p className="text-xs text-neutral-400">Current: {userId}</p>
         </div>
 
         <div className="mt-4">
