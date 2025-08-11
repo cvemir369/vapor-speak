@@ -15,33 +15,25 @@ export default function Header() {
       <nav className="hidden md:flex gap-4">
         <Link
           href="/"
-          className={
-            pathname === "/"
-              ? "font-semibold underline"
-              : " hover:text-gray-500"
-          }
+          className={pathname === "/" ? "font-bold" : " hover:text-gray-500"}
         >
-          Home
+          🏠 Home
         </Link>
         <Link
           href="/channels"
           className={
-            pathname === "/channels"
-              ? "font-semibold underline"
-              : " hover:text-gray-500"
+            pathname === "/channels" ? "font-bold" : " hover:text-gray-500"
           }
         >
-          Channels
+          💬 Channels
         </Link>
         <Link
           href="/about"
           className={
-            pathname === "/about"
-              ? "font-semibold underline"
-              : " hover:text-gray-500"
+            pathname === "/about" ? "font-bold" : " hover:text-gray-500"
           }
         >
-          About
+          ℹ️ About
         </Link>
       </nav>
     </header>
