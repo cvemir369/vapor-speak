@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useWebSocket } from "@/hooks/useWebSocket";
 
 export default function Channels() {
+  const [mounted, setMounted] = useState(false);
   const [selectedChannel, setSelectedChannel] = useState("general");
   const [userId, setUserId] = useState(
     `user_${crypto.randomUUID().slice(0, 8)}`
   );
+  const [tempUserId, setTempUserId] = useState(userId);
   const [messageInput, setMessageInput] = useState("");
 
   const { messages, sendMessage, isConnected } = useWebSocket(
@@ -15,7 +17,21 @@ export default function Channels() {
     userId
   );
 
-  const channels = ["general", "random", "tech", "music"];
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const channels = [
+    "general",
+    "random",
+    "tech",
+    "music",
+    "sports",
+    "gaming",
+    "movies",
+    "news",
+    "live event",
+  ];
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,20 +41,31 @@ export default function Channels() {
     }
   };
 
+  const handleUsernameChange = () => {
+    if (tempUserId.trim()) {
+      setUserId(tempUserId.trim());
+    }
+  };
+
   return (
-    <div className="flex h-screen">
+    <div
+      className={`flex w-screen p-6 transition-opacity duration-300 ${
+        mounted ? "opacity-100" : "opacity-0"
+      }`}
+      style={{ minHeight: "100vh" }}
+    >
       {/* Channel Sidebar */}
-      <div className="w-64 bg-gray-800 text-white p-4">
-        <h2 className="text-xl font-bold mb-4">Channels</h2>
-        <div className="space-y-2">
+      <div className="text-white p-4">
+        <h2 className="text-2xl font-bold mb-4">Channels</h2>
+        <div className="flex flex-col gap-2">
           {channels.map((channel) => (
             <button
               key={channel}
               onClick={() => setSelectedChannel(channel)}
-              className={`block w-full text-left p-2 rounded ${
+              className={`block w-full text-left p-2 rounded-full transition-colors ${
                 selectedChannel === channel
-                  ? "bg-blue-600"
-                  : "bg-gray-700 hover:bg-gray-600"
+                  ? "bg-neutral-300 text-neutral-900 font-bold"
+                  : "bg-neutral-800 hover:bg-neutral-600"
               }`}
             >
               # {channel}
@@ -46,22 +73,30 @@ export default function Channels() {
           ))}
         </div>
 
-        <div className="mt-8">
-          <label className="block text-sm font-medium mb-2">
-            Your Username:
-          </label>
+        <div className="flex flex-col gap-2 mt-8">
+          <label className="">Your Username:</label>
           <input
             type="text"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            className="w-full p-2 rounded bg-gray-700 text-white"
+            value={tempUserId}
+            onChange={(e) => setTempUserId(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleUsernameChange()}
+            className="w-full p-2 rounded bg-neutral-300 text-neutral-900 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all"
+            placeholder="Enter username"
           />
+          <button
+            onClick={handleUsernameChange}
+            disabled={!tempUserId.trim() || tempUserId.trim() === userId}
+            className="bg-neutral-800 text-white px-4 py-2 rounded-full hover:bg-neutral-600 disabled:bg-neutral-900 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors"
+          >
+            Set Username
+          </button>
+          <p className="text-xs text-neutral-400">Current: {userId}</p>
         </div>
 
         <div className="mt-4">
           <span
-            className={`inline-block w-3 h-3 rounded-full ${
-              isConnected ? "bg-green-500" : "bg-red-500"
+            className={`inline-block w-3 h-3 rounded-full transition-colors ${
+              isConnected ? "bg-green-600" : "bg-red-600"
             }`}
           ></span>
           <span className="ml-2 text-sm">
@@ -73,20 +108,22 @@ export default function Channels() {
       {/* Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Chat Header */}
-        <div className="bg-white border-b p-4">
-          <h1 className="font-bold text-2xl">#{selectedChannel}</h1>
+        <div className="bg-neutral-300 rounded-2xl p-3">
+          <h1 className="font-bold text-2xl text-neutral-900">
+            #{selectedChannel}
+          </h1>
           <p className="text-gray-600">
             Welcome to the {selectedChannel} channel
           </p>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        <div className="flex-1 max-h-9/12 overflow-y-auto p-4 space-y-3">
           {messages.map((msg, index) => (
             <div key={index} className="flex flex-col">
               {msg.type === "chat_message" ? (
                 <div className="flex items-start space-x-3">
-                  <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">
+                  <div className="bg-neutral-500 text-white w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold">
                     {msg.userId.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -98,7 +135,7 @@ export default function Channels() {
                         </span>
                       )}
                     </div>
-                    <p className="text-gray-800">{msg.message}</p>
+                    <p className="text-neutral-100">{msg.message}</p>
                   </div>
                 </div>
               ) : (
@@ -118,13 +155,13 @@ export default function Channels() {
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
               placeholder={`Message #${selectedChannel}`}
-              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all"
               disabled={!isConnected}
             />
             <button
               type="submit"
               disabled={!isConnected || !messageInput.trim()}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-300"
+              className="bg-neutral-800 text-white px-4 py-2 rounded-lg hover:bg-neutral-600 disabled:bg-neutral-900 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors"
             >
               Send
             </button>
