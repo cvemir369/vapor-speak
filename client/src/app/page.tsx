@@ -9,6 +9,8 @@ export default function Home() {
         <p className="text-lg">
           Explore live chat channels and express yourself.
         </p>
+        <p>Chats and users are not saved or stored.</p>
+        <p>Anonymous mode is enabled.</p>
         <Link
           href="/channels"
           className="rounded-full w-fit bg-neutral-500 text-white py-2 px-4 hover:bg-neutral-600 cursor-pointer active:scale-95 transition-transform"
