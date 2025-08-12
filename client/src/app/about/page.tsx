@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function About() {
   return (
-    <div className="flex flex-col items-left justify-center gap-4 p-6">
+    <div className="flex flex-col gap-4 p-6 w-full">
       <MobileMenu />
 
       <div className="flex flex-col gap-4 mt-16 md:mt-0">
@@ -30,12 +30,13 @@ export default function About() {
         <p>Together, we can make a difference.</p>
         <p>All messages are anonymous and not stored.</p>
       </div>
-      <div className="flex gap-2">
+
+      <div className="flex gap-2 mt-auto">
         <Link
           href="/"
           className="rounded-full w-fit bg-neutral-800 text-white py-2 px-4 mt-3 hover:bg-neutral-700 cursor-pointer active:scale-95 transition-transform"
         >
-          Go back to Home
+          Back to Home
         </Link>
         <Link
           href="/channels"
