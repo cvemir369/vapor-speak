@@ -74,6 +74,35 @@ wss.on(
               });
             }
             break;
+
+          case "user_renamed":
+            console.log("Received user_renamed message:", message);
+            if (ws.channel) {
+              // Update the user's userId
+              const oldUserId = ws.userId;
+              ws.userId = message.newUserId;
+
+              console.log(
+                `User renamed from ${message.oldUserId} to ${message.newUserId} in channel ${ws.channel}`
+              );
+
+              // Broadcast rename notification to all users in the channel
+              const renameNotification = {
+                type: "user_renamed",
+                userId: "System",
+                message: `${message.oldUserId} changed their name to ${message.newUserId}`,
+                timestamp: new Date().toISOString(),
+                oldUserId: message.oldUserId,
+                newUserId: message.newUserId,
+              };
+
+              console.log(
+                "Broadcasting rename notification:",
+                renameNotification
+              );
+              broadcastToChannel(ws.channel, renameNotification);
+            }
+            break;
         }
       } catch (error) {
         console.error("Error parsing message:", error);

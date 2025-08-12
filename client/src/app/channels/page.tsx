@@ -4,16 +4,25 @@ import { useState } from "react";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import MobileMenu from "@/components/MobileMenu";
 
+// Helper function to generate a random ID that works across all browsers
+const generateUserId = () => {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return `user_${result}`;
+};
+
 export default function Channels() {
   const [selectedChannel, setSelectedChannel] = useState("general");
   const [userId, setUserId] = useState(() => {
     if (typeof window !== "undefined") {
       const storedUserId = localStorage.getItem("userId");
-      return storedUserId
-        ? JSON.parse(storedUserId)
-        : `user_${crypto.randomUUID().slice(0, 8)}`;
+      return storedUserId ? JSON.parse(storedUserId) : generateUserId();
     }
-    return `user_${crypto.randomUUID().slice(0, 8)}`;
+    return generateUserId();
   });
   const [tempUserId, setTempUserId] = useState(userId);
   const [messageInput, setMessageInput] = useState("");
