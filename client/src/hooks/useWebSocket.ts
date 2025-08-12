@@ -105,10 +105,6 @@ export const useWebSocket = (channel: string, userId: string) => {
       setIsConnected(false);
     };
 
-    ws.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
     return () => {
       ws.current?.close();
     };
