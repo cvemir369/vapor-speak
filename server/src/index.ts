@@ -34,8 +34,6 @@ const wss = new WebSocketServer({ server });
 wss.on(
   "connection",
   (ws: WebSocket & { userId?: string; channel?: string }) => {
-    console.log("Client connected");
-
     ws.on("message", (data: string) => {
       try {
         const message = JSON.parse(data);
@@ -76,15 +74,9 @@ wss.on(
             break;
 
           case "user_renamed":
-            console.log("Received user_renamed message:", message);
             if (ws.channel) {
               // Update the user's userId
-              const oldUserId = ws.userId;
               ws.userId = message.newUserId;
-
-              console.log(
-                `User renamed from ${message.oldUserId} to ${message.newUserId} in channel ${ws.channel}`
-              );
 
               // Broadcast rename notification to all users in the channel
               const renameNotification = {
@@ -96,22 +88,16 @@ wss.on(
                 newUserId: message.newUserId,
               };
 
-              console.log(
-                "Broadcasting rename notification:",
-                renameNotification
-              );
               broadcastToChannel(ws.channel, renameNotification);
             }
             break;
         }
       } catch (error) {
-        console.error("Error parsing message:", error);
+        console.error("Error parsing WebSocket message:", error);
       }
     });
 
     ws.on("close", () => {
-      console.log("Client disconnected");
-
       // Remove from channel
       if (ws.channel && channels.has(ws.channel)) {
         channels.get(ws.channel)?.delete(ws);

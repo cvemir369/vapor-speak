@@ -56,10 +56,6 @@ export const useWebSocket = (channel: string, userId: string) => {
       isConnected &&
       previousUserIdRef.current !== ""
     ) {
-      console.log(
-        `User renamed from ${previousUserIdRef.current} to ${userId}`
-      );
-
       // Send rename notification to WebSocket (server will broadcast to everyone)
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         const renameMessage = {
@@ -69,7 +65,6 @@ export const useWebSocket = (channel: string, userId: string) => {
           newUserId: userId,
         };
 
-        console.log("Sending rename message:", renameMessage);
         ws.current.send(JSON.stringify(renameMessage));
       }
     }
@@ -82,7 +77,6 @@ export const useWebSocket = (channel: string, userId: string) => {
     ws.current = new WebSocket("ws://localhost:5000");
 
     ws.current.onopen = () => {
-      console.log("WebSocket connected");
       setIsConnected(true);
       // Join the channel
       ws.current?.send(
@@ -96,11 +90,9 @@ export const useWebSocket = (channel: string, userId: string) => {
 
     ws.current.onmessage = (event) => {
       const message: ChatMessage = JSON.parse(event.data);
-      console.log("Received WebSocket message:", message);
 
       setMessages((prev) => [...prev, message]);
 
-      // Also save received messages to storage
       messageStorage.saveMessage(channel, {
         id: Date.now().toString(),
         user: message.userId,
@@ -110,18 +102,13 @@ export const useWebSocket = (channel: string, userId: string) => {
     };
 
     ws.current.onclose = () => {
-      console.log("WebSocket disconnected");
       setIsConnected(false);
-    };
-
-    ws.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
     };
 
     return () => {
       ws.current?.close();
     };
-  }, [channel]); // Only depend on channel, not userId
+  }, [channel]);
 
   const sendMessage = useCallback(
     (message: string) => {
@@ -133,22 +120,10 @@ export const useWebSocket = (channel: string, userId: string) => {
           timestamp: Date.now(),
         };
 
-        // Save to storage with correct format
-        messageStorage.saveMessage(channel, {
-          id: Date.now().toString(),
-          user: userId,
-          content: message,
-          channel,
-        });
-
-        // DON'T update state here - let the WebSocket response handle it
-        // setMessages((prev) => [...prev, chatMessage]);
-
-        // Send via WebSocket
         ws.current.send(JSON.stringify(chatMessage));
       }
     },
-    [isConnected, channel, userId]
+    [isConnected, userId]
   );
 
   return { messages, sendMessage, isConnected };
