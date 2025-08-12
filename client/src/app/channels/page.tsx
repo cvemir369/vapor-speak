@@ -26,8 +26,7 @@ export default function Channels() {
     "sports",
     "gaming",
     "movies",
-    "news",
-    "live event",
+    "politics",
   ]);
 
   const { messages, sendMessage, isConnected } = useWebSocket(
