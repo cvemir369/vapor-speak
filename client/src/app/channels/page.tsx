@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import MobileMenu from "@/components/MobileMenu";
 
@@ -15,6 +15,8 @@ const generateUserId = () => {
   return `user_${result}`;
 };
 
+const MAX_MESSAGE_LENGTH = 500; // Set your desired character limit
+
 export default function Channels() {
   const [selectedChannel, setSelectedChannel] = useState("general");
   const [userId, setUserId] = useState(() => {
@@ -26,8 +28,9 @@ export default function Channels() {
   });
   const [tempUserId, setTempUserId] = useState(userId);
   const [messageInput, setMessageInput] = useState("");
-  const [newChannelInput, setNewChannelInput] = useState("");
-  const [channels, setChannels] = useState([
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const channels = [
     "general",
     "random",
     "tech",
@@ -36,18 +39,33 @@ export default function Channels() {
     "gaming",
     "movies",
     "politics",
-  ]);
+  ];
 
   const { messages, sendMessage, isConnected } = useWebSocket(
     selectedChannel,
     userId
   );
 
+  // Auto scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (messageInput.trim()) {
-      sendMessage(messageInput);
+    if (
+      messageInput.trim() &&
+      messageInput.trim().length <= MAX_MESSAGE_LENGTH
+    ) {
+      sendMessage(messageInput.trim());
       setMessageInput("");
+    }
+  };
+
+  const handleMessageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= MAX_MESSAGE_LENGTH) {
+      setMessageInput(value);
     }
   };
 
@@ -58,22 +76,14 @@ export default function Channels() {
     }
   };
 
-  const handleCreateChannel = () => {
-    if (
-      newChannelInput.trim() &&
-      !channels.includes(newChannelInput.trim().toLowerCase())
-    ) {
-      const newChannel = newChannelInput.trim().toLowerCase();
-      setChannels([...channels, newChannel]);
-      setSelectedChannel(newChannel);
-      setNewChannelInput("");
-    }
-  };
-
   const handleChannelSelect = (channel: string, closeMenu?: () => void) => {
     setSelectedChannel(channel);
     closeMenu?.();
   };
+
+  // Character count and remaining characters
+  const remainingChars = MAX_MESSAGE_LENGTH - messageInput.length;
+  const isNearLimit = remainingChars <= 50;
 
   return (
     <div className="flex w-screen p-6 transition-opacity duration-300 relative">
@@ -88,7 +98,7 @@ export default function Channels() {
                 <button
                   key={channel}
                   onClick={() => handleChannelSelect(channel, closeMenu)}
-                  className={`block w-full text-left p-2 rounded-full transition-colors ${
+                  className={`block w-full text-left p-2 rounded-full transition-colors cursor-pointer ${
                     selectedChannel === channel
                       ? "bg-neutral-300 text-neutral-900 font-bold"
                       : "bg-neutral-800 hover:bg-neutral-600"
@@ -97,27 +107,6 @@ export default function Channels() {
                   # {channel}
                 </button>
               ))}
-            </div>
-
-            <div className="flex items-stretch mt-4">
-              <input
-                type="text"
-                value={newChannelInput}
-                onChange={(e) => setNewChannelInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleCreateChannel()}
-                className="flex-1 p-2 rounded-l-full bg-neutral-800 text-white focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-inset border-0"
-                placeholder="Create a new channel"
-              />
-              <button
-                onClick={handleCreateChannel}
-                disabled={
-                  !newChannelInput.trim() ||
-                  channels.includes(newChannelInput.trim().toLowerCase())
-                }
-                className="bg-neutral-600 text-white px-4 py-2 rounded-r-full hover:bg-neutral-500 disabled:bg-neutral-900 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors border-0"
-              >
-                ➕
-              </button>
             </div>
 
             <div className="flex items-stretch mt-4">
@@ -160,7 +149,7 @@ export default function Channels() {
             <button
               key={channel}
               onClick={() => handleChannelSelect(channel)}
-              className={`block w-full text-left p-2 rounded-full transition-colors ${
+              className={`block w-full text-left p-2 rounded-full transition-colors cursor-pointer ${
                 selectedChannel === channel
                   ? "bg-neutral-300 text-neutral-900 font-bold"
                   : "bg-neutral-800 hover:bg-neutral-600"
@@ -169,27 +158,6 @@ export default function Channels() {
               # {channel}
             </button>
           ))}
-        </div>
-
-        <div className="flex items-stretch mt-4">
-          <input
-            type="text"
-            value={newChannelInput}
-            onChange={(e) => setNewChannelInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleCreateChannel()}
-            className="flex-1 p-2 rounded-l-full bg-neutral-800 text-white focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-inset border-0"
-            placeholder="Create a new channel"
-          />
-          <button
-            onClick={handleCreateChannel}
-            disabled={
-              !newChannelInput.trim() ||
-              channels.includes(newChannelInput.trim().toLowerCase())
-            }
-            className="bg-neutral-600 text-white px-4 py-2 rounded-r-full hover:bg-neutral-500 disabled:bg-neutral-900 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors border-0"
-          >
-            ➕
-          </button>
         </div>
 
         <div className="flex items-stretch mt-4">
@@ -264,23 +232,41 @@ export default function Channels() {
               )}
             </div>
           ))}
+          {/* Invisible element to scroll to */}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Message Input */}
         <form onSubmit={handleSendMessage} className="border-t p-4">
-          <div className="flex space-x-2">
-            <input
-              type="text"
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-              placeholder={`Message #${selectedChannel}`}
-              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-inset"
-              disabled={!isConnected}
-            />
+          <div className="flex space-x-2 items-end">
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={messageInput}
+                onChange={handleMessageInputChange}
+                placeholder={`Message #${selectedChannel}`}
+                className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-inset"
+                disabled={!isConnected}
+                maxLength={MAX_MESSAGE_LENGTH}
+              />
+              {messageInput.length > 0 && (
+                <div className="absolute -bottom-5 right-0 text-xs">
+                  <span
+                    className={isNearLimit ? "text-red-500" : "text-gray-500"}
+                  >
+                    {messageInput.length}/{MAX_MESSAGE_LENGTH}
+                  </span>
+                </div>
+              )}
+            </div>
             <button
               type="submit"
-              disabled={!isConnected || !messageInput.trim()}
-              className="bg-neutral-800 text-white px-4 py-2 rounded-lg hover:bg-neutral-600 disabled:bg-neutral-900 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors"
+              disabled={
+                !isConnected ||
+                !messageInput.trim() ||
+                messageInput.length > MAX_MESSAGE_LENGTH
+              }
+              className="bg-neutral-800 text-white px-4 py-2 rounded-lg hover:bg-neutral-600 disabled:bg-neutral-900 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors flex-shrink-0 cursor-pointer"
             >
               Send
             </button>

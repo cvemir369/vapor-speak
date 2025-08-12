@@ -1,4 +1,3 @@
-// utils/messageStorage.ts
 interface StoredMessage {
   id: string;
   user: string;
