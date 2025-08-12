@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import "./globals.css";
+import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -15,19 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link
-          rel="preload"
-          href="/_next/static/media/8ee3a1ba4ed5baee-s.p.be19f591.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-      </head>
-      <body className="antialiased min-h-screen bg-neutral-900 text-neutral-50">
+      <body className="antialiased min-h-screen bg-neutral-900 text-neutral-50 flex flex-col">
         <Header />
-        <div className="flex flex-col items-center justify-center min-h-screen">
-          <main className="flex flex-col gap-5 items-center sm:items-start">
+        <div className="flex-1 flex flex-col items-center justify-center mx-auto">
+          <main className="flex flex-col gap-5 items-center sm:items-start w-full max-w-4xl px-4">
             {children}
           </main>
         </div>

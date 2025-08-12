@@ -28,7 +28,7 @@ export default function MobileMenu({ children, onClose }: MobileMenuProps) {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden fixed top-2 left-4 z-50 bg-neutral-800 text-white p-2 rounded-full hover:bg-neutral-600 transition-colors"
+        className="md:hidden fixed top-2 left-4 z-50 bg-neutral-800 text-white p-2 rounded-full hover:bg-neutral-600 transition-colors cursor-pointer"
       >
         {isOpen ? (
           <svg
@@ -86,7 +86,7 @@ export default function MobileMenu({ children, onClose }: MobileMenuProps) {
             <div className="flex flex-col gap-2">
               <button
                 onClick={() => handleNavigation("/")}
-                className={`block w-full text-left p-2 rounded-full transition-colors ${
+                className={`block w-full text-left p-2 rounded-full transition-colors cursor-pointer ${
                   pathname === "/"
                     ? "bg-neutral-300 text-neutral-900 font-bold"
                     : "bg-neutral-800 hover:bg-neutral-600"
@@ -96,7 +96,7 @@ export default function MobileMenu({ children, onClose }: MobileMenuProps) {
               </button>
               <button
                 onClick={() => handleNavigation("/channels")}
-                className={`block w-full text-left p-2 rounded-full transition-colors ${
+                className={`block w-full text-left p-2 rounded-full transition-colors cursor-pointer ${
                   pathname === "/channels"
                     ? "bg-neutral-300 text-neutral-900 font-bold"
                     : "bg-neutral-800 hover:bg-neutral-600"
@@ -106,7 +106,7 @@ export default function MobileMenu({ children, onClose }: MobileMenuProps) {
               </button>
               <button
                 onClick={() => handleNavigation("/about")}
-                className={`block w-full text-left p-2 rounded-full transition-colors ${
+                className={`block w-full text-left p-2 rounded-full transition-colors cursor-pointer ${
                   pathname === "/about"
                     ? "bg-neutral-300 text-neutral-900 font-bold"
                     : "bg-neutral-800 hover:bg-neutral-600"
