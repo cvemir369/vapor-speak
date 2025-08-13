@@ -12,37 +12,42 @@ export default function About() {
     <div className="flex flex-col gap-4 p-6 w-full">
       <MobileMenu />
 
-      <div className="flex flex-col gap-4 mt-16 md:mt-0">
+      <div className="flex flex-col gap-4 my-2">
         <h1 className="font-bold text-4xl">About Us</h1>
-        <p>We are a platform dedicated to helping you express your feelings.</p>
-        <p>
-          Our mission is to provide a safe and anonymous space for open
-          communication.
-        </p>
-        <p>
-          We believe in the power of conversation and the importance of mental
-          health.
-        </p>
-        <p>
-          Join us in creating a supportive community where everyone can share
-          their thoughts and feelings.
-        </p>
-        <p>Together, we can make a difference.</p>
-        <p>All messages are anonymous and not stored.</p>
+        <ul className="list-disc list-outside ml-4 pl-2 space-y-1">
+          <li>Vapor Speak is a platform for anonymous communication.</li>
+          <li>We prioritize user privacy and data security.</li>
+          <li>Our goal is to foster open and honest conversations.</li>
+          <li>We are committed to continuous improvement and innovation.</li>
+          <li>
+            We are a platform dedicated to helping you express your feelings.
+          </li>
+          <li>
+            {" "}
+            Our mission is to provide a safe and anonymous space for open
+            communication.
+          </li>
+          <li>
+            We believe in the power of conversation and the importance of mental
+            health.
+          </li>
+          <li>Together, we can make a difference.</li>
+          <li>All messages are anonymous and not stored.</li>
+        </ul>
       </div>
 
-      <div className="flex gap-2 mt-auto">
-        <Link
-          href="/"
-          className="rounded-full w-fit bg-neutral-800 text-white py-2 px-4 mt-3 hover:bg-neutral-700 cursor-pointer active:scale-95 transition-transform"
-        >
-          Back to Home
-        </Link>
+      <div className="flex flex-col md:flex-row gap-2 mt-auto">
         <Link
           href="/channels"
-          className="rounded-full w-fit bg-neutral-800 text-white py-2 px-4 mt-3 hover:bg-neutral-700 cursor-pointer active:scale-95 transition-transform"
+          className="text-center rounded-full w-full sm:w-sm bg-neutral-800 text-white py-2 px-4 mt-3 hover:bg-neutral-700 cursor-pointer active:scale-95 transition-transform"
         >
           Explore Channels
+        </Link>
+        <Link
+          href="/"
+          className="text-center rounded-full w-full sm:w-sm bg-neutral-800 text-white py-2 px-4 mt-3 hover:bg-neutral-700 cursor-pointer active:scale-95 transition-transform"
+        >
+          Back to Home
         </Link>
       </div>
     </div>
