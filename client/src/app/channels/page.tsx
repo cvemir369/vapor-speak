@@ -28,6 +28,7 @@ export default function Channels() {
   });
   const [tempUserId, setTempUserId] = useState(userId);
   const [messageInput, setMessageInput] = useState("");
+  const [activeUsers, setActiveUsers] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const channels = [
@@ -45,6 +46,17 @@ export default function Channels() {
     selectedChannel,
     userId
   );
+
+  // Extract active users from messages
+  useEffect(() => {
+    const users = new Set<string>();
+    messages.forEach((msg) => {
+      if (msg.type === "chat_message" && msg.userId) {
+        users.add(msg.userId);
+      }
+    });
+    setActiveUsers(Array.from(users));
+  }, [messages]);
 
   // Auto scroll to bottom when messages change
   useEffect(() => {
@@ -70,11 +82,22 @@ export default function Channels() {
   };
 
   const handleUsernameChange = () => {
-    if (tempUserId.trim()) {
-      setUserId(tempUserId.trim());
-      localStorage.setItem("userId", JSON.stringify(tempUserId.trim()));
+    const trimmedUsername = tempUserId.trim();
+    if (
+      trimmedUsername &&
+      trimmedUsername !== userId &&
+      !activeUsers.includes(trimmedUsername)
+    ) {
+      setUserId(trimmedUsername);
+      localStorage.setItem("userId", JSON.stringify(trimmedUsername));
     }
   };
+
+  // Check if username is taken
+  const isUsernameTaken =
+    tempUserId.trim() &&
+    tempUserId.trim() !== userId &&
+    activeUsers.includes(tempUserId.trim());
 
   const handleChannelSelect = (channel: string, closeMenu?: () => void) => {
     setSelectedChannel(channel);
@@ -116,12 +139,25 @@ export default function Channels() {
                 value={tempUserId}
                 onChange={(e) => setTempUserId(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleUsernameChange()}
-                className="flex-1 p-2 rounded-full bg-neutral-800 text-white focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-inset border-0"
+                className={`flex-1 p-2 rounded-full bg-neutral-800 text-white focus:outline-none focus:ring-2 focus:ring-inset border-0 ${
+                  isUsernameTaken
+                    ? "focus:ring-red-500 ring-2 ring-red-500"
+                    : "focus:ring-neutral-500"
+                }`}
                 placeholder="Enter username"
               />
+              {isUsernameTaken && (
+                <p className="text-red-500 text-sm">
+                  Username is already taken
+                </p>
+              )}
               <button
                 onClick={handleUsernameChange}
-                disabled={!tempUserId.trim() || tempUserId.trim() === userId}
+                disabled={
+                  !tempUserId.trim() ||
+                  tempUserId.trim() === userId ||
+                  isUsernameTaken
+                }
                 className="bg-neutral-600 text-white px-4 py-2 rounded-full hover:bg-neutral-500 disabled:bg-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors border-0"
               >
                 Edit Username
@@ -169,12 +205,23 @@ export default function Channels() {
               value={tempUserId}
               onChange={(e) => setTempUserId(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleUsernameChange()}
-              className="block w-auto p-2 rounded-full bg-neutral-800 text-white focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-inset border-0"
+              className={`block w-auto p-2 rounded-full bg-neutral-800 text-white focus:outline-none focus:ring-2 focus:ring-inset border-0 ${
+                isUsernameTaken
+                  ? "focus:ring-red-500 ring-2 ring-red-500"
+                  : "focus:ring-neutral-500"
+              }`}
               placeholder="Enter username"
             />
+            {isUsernameTaken && (
+              <p className="text-red-500 text-sm">Username is already taken</p>
+            )}
             <button
               onClick={handleUsernameChange}
-              disabled={!tempUserId.trim() || tempUserId.trim() === userId}
+              disabled={
+                !tempUserId.trim() ||
+                tempUserId.trim() === userId ||
+                isUsernameTaken
+              }
               className="bg-neutral-600 text-white px-4 py-2 rounded-full hover:bg-neutral-500 disabled:bg-neutral-700 disabled:text-neutral-500 disabled:cursor-not-allowed transition-colors border-0 cursor-pointer"
             >
               Edit Username
