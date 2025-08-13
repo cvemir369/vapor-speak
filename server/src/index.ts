@@ -1,20 +1,14 @@
 import express from "express";
 import { WebSocketServer, WebSocket } from "ws";
 import { createServer } from "http";
-import dotenv from "dotenv";
-
-// Load environment variables
-dotenv.config();
 
 // Create Express app
 const app = express();
 const PORT = process.env.PORT || 5000;
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
-const SERVER_HOST = process.env.SERVER_HOST || "localhost";
 
 // Enable CORS for your frontend
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", CORS_ORIGIN);
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -133,6 +127,6 @@ function broadcastToChannel(channel: string, message: any) {
 
 // Start the server
 server.listen(PORT, () => {
-  console.log(`🚀 Server is running at http://${SERVER_HOST}:${PORT}`);
-  console.log(`🚀 WebSocket server is running at ws://${SERVER_HOST}:${PORT}`);
+  console.log(`🚀 Server is running at http://localhost:${PORT}`);
+  console.log(`🚀 WebSocket server is running at ws://localhost:${PORT}`);
 });

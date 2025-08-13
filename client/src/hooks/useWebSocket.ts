@@ -74,8 +74,7 @@ export const useWebSocket = (channel: string, userId: string) => {
 
   useEffect(() => {
     // Connect to WebSocket
-    const wsUrl = process.env.NEXT_PUBLIC_WS_URL || "ws://localhost:5000";
-    ws.current = new WebSocket(wsUrl);
+    ws.current = new WebSocket("ws://localhost:5000");
 
     ws.current.onopen = () => {
       setIsConnected(true);
