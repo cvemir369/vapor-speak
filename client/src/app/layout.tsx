@@ -18,7 +18,7 @@ export default function RootLayout({
       <body className="antialiased min-h-screen bg-neutral-900 text-neutral-50 flex flex-col">
         <Header />
         <div className="flex-1 flex flex-col items-center justify-center mx-auto">
-          <main className="flex flex-col gap-5 items-center sm:items-start w-full max-w-4xl px-4">
+          <main className="flex flex-col gap-5 items-center sm:items-start w-full px-4">
             {children}
           </main>
         </div>
