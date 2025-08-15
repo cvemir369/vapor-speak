@@ -18,7 +18,19 @@ const generateUserId = () => {
 const MAX_MESSAGE_LENGTH = 500; // Set your desired character limit
 
 export default function Channels() {
-  const [selectedChannel, setSelectedChannel] = useState("general");
+  const [selectedChannel, setSelectedChannel] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("selectedChannel") || "general";
+    }
+    return "general";
+  });
+  // mirror selected channel in localStorage so refresh uses the last channel
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedChannel", selectedChannel);
+    }
+  }, [selectedChannel]);
+
   const [userId, setUserId] = useState(() => {
     if (typeof window !== "undefined") {
       const storedUserId = localStorage.getItem("userId");
@@ -26,6 +38,11 @@ export default function Channels() {
     }
     return generateUserId();
   });
+  // keep temp input in sync when userId changes (e.g. after edit)
+  useEffect(() => {
+    setTempUserId(userId);
+  }, [userId]);
+
   const [tempUserId, setTempUserId] = useState(userId);
   const [messageInput, setMessageInput] = useState("");
   const [activeUsers, setActiveUsers] = useState<string[]>([]);
@@ -101,15 +118,30 @@ export default function Channels() {
 
   const handleChannelSelect = (channel: string, closeMenu?: () => void) => {
     setSelectedChannel(channel);
-    closeMenu?.();
+    if (typeof window !== "undefined") {
+      localStorage.setItem("selectedChannel", channel);
+      // force a full reload so the websocket hook reconnects reliably
+      // (keeps selectedChannel persisted via localStorage)
+      window.location.reload();
+    } else {
+      closeMenu?.();
+    }
   };
 
   // Character count and remaining characters
   const remainingChars = MAX_MESSAGE_LENGTH - messageInput.length;
   const isNearLimit = remainingChars <= 50;
 
+  if (!isConnected) {
+    return <div>Connecting...</div>;
+  }
+
+  // add a key that includes selectedChannel and userId to force remount
   return (
-    <div className="flex p-6 transition-opacity duration-300 relative">
+    <div
+      key={`${selectedChannel}-${userId}`}
+      className="flex p-6 transition-opacity duration-300 relative"
+    >
       {/* Mobile Menu */}
       <MobileMenu>
         {(closeMenu) => (
