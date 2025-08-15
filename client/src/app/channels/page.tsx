@@ -64,6 +64,23 @@ export default function Channels() {
     userId
   );
 
+  // If the server was cold and took time to boot, reload the page once after
+  // the websocket successfully connects so the app initializes the same way
+  // a manual refresh would. Use sessionStorage so this happens only once per tab.
+  useEffect(() => {
+    if (!isConnected) return;
+    try {
+      const key = "reloadedAfterConnect";
+      if (!sessionStorage.getItem(key)) {
+        sessionStorage.setItem(key, Date.now().toString());
+        // small delay to let any final setup complete before a full reload
+        setTimeout(() => window.location.reload(), 100);
+      }
+    } catch {
+      // ignore storage errors
+    }
+  }, [isConnected]);
+
   // Extract active users from messages
   useEffect(() => {
     const users = new Set<string>();
