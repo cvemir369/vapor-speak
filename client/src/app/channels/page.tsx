@@ -150,6 +150,14 @@ export default function Channels() {
   const isNearLimit = remainingChars <= 50;
 
   if (!isConnected) {
+    // If not connected, check if we should reload after connecting
+    if (typeof window !== "undefined") {
+      const key = "reloadedAfterConnect";
+      if (!sessionStorage.getItem(key) && isConnected) {
+        sessionStorage.setItem(key, Date.now().toString());
+        setTimeout(() => window.location.reload(), 100);
+      }
+    }
     return <div>Connecting...</div>;
   }
 
