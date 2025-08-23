@@ -73,13 +73,16 @@ export default function Channels() {
       const key = "reloadedAfterConnect";
       if (!sessionStorage.getItem(key)) {
         sessionStorage.setItem(key, Date.now().toString());
-        // small delay to let any final setup complete before a full reload
         setTimeout(() => window.location.reload(), 100);
       }
     } catch {
       // ignore storage errors
     }
   }, [isConnected]);
+
+  if (!isConnected) {
+    return <div>Connecting...</div>;
+  }
 
   // Extract active users from messages
   useEffect(() => {
@@ -148,18 +151,6 @@ export default function Channels() {
   // Character count and remaining characters
   const remainingChars = MAX_MESSAGE_LENGTH - messageInput.length;
   const isNearLimit = remainingChars <= 50;
-
-  if (!isConnected) {
-    // If not connected, check if we should reload after connecting
-    if (typeof window !== "undefined") {
-      const key = "reloadedAfterConnect";
-      if (!sessionStorage.getItem(key) && isConnected) {
-        sessionStorage.setItem(key, Date.now().toString());
-        setTimeout(() => window.location.reload(), 100);
-      }
-    }
-    return <div>Connecting...</div>;
-  }
 
   // add a key that includes selectedChannel and userId to force remount
   return (
