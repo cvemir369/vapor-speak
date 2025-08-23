@@ -80,11 +80,6 @@ export default function Channels() {
     }
   }, [isConnected]);
 
-  if (!isConnected) {
-    return <div>Connecting...</div>;
-  }
-
-  // Extract active users from messages
   useEffect(() => {
     const users = new Set<string>();
     messages.forEach((msg) => {
@@ -95,10 +90,14 @@ export default function Channels() {
     setActiveUsers(Array.from(users));
   }, [messages]);
 
-  // Auto scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  // Move this after all hooks
+  if (!isConnected) {
+    return <div>Connecting...</div>;
+  }
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
